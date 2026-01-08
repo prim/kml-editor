@@ -132,25 +132,25 @@ class SegmentManager:
 		st.session_state.file_names = set()
 		st.session_state.next_order = 0
 
-	def move_split_point(self, segment, direction):
-		"""移动分裂点，每次移动10个点"""
+	def move_split_point(self, segment, direction, step=10):
+		"""移动分裂点，每次移动 step 个点"""
 		if direction == 'backward':
-			# 向前移动10个点，但不超过起点
-			new_index = max(0, segment.split_point_index - 10)
+			# 向前移动 step 个点，但不超过起点
+			new_index = max(0, segment.split_point_index - step)
 			segment.split_point_index = new_index
 		elif direction == 'forward':
-			# 向后移动10个点，但不超过终点
-			new_index = min(len(segment.coordinates) - 1, segment.split_point_index + 10)
+			# 向后移动 step 个点，但不超过终点
+			new_index = min(len(segment.coordinates) - 1, segment.split_point_index + step)
 			segment.split_point_index = new_index
 		elif direction == 'start_forward':
-			# 起点向后移动10个点
-			segment.coordinates = segment.coordinates[10:]
-			segment.elevations = segment.elevations[10:]
-			segment.split_point_index = max(0, segment.split_point_index - 10)
+			# 起点向后移动 step 个点
+			segment.coordinates = segment.coordinates[step:]
+			segment.elevations = segment.elevations[step:]
+			segment.split_point_index = max(0, segment.split_point_index - step)
 		elif direction == 'end_backward':
-			# 终点向前移动10个点
-			segment.coordinates = segment.coordinates[:-10]
-			segment.elevations = segment.elevations[:-10]
+			# 终点向前移动 step 个点
+			segment.coordinates = segment.coordinates[:-step]
+			segment.elevations = segment.elevations[:-step]
 			segment.split_point_index = min(segment.split_point_index, len(segment.coordinates) - 1)
 	
 	def reverse_segment(self, segment):
@@ -644,13 +644,21 @@ def main():
 			
 			# 第一行：分裂点控制
 			st.sidebar.write("分裂点控制：")
-			col1, col2, col3 = st.sidebar.columns(3)
-			if col1.button(f"⬅️ 前10点###{segment.order}"):
-				st.session_state.segment_mgr.move_split_point(segment, 'backward')
-			if col2.button(f"✂️ 分割###{segment.order}"):
+			col1, col2, col3, col4, col5, col6, col7 = st.sidebar.columns([1,1,1,1,1,1,1])
+			if col1.button(f"⬅️10###{segment.order}"):
+				st.session_state.segment_mgr.move_split_point(segment, 'backward', 10)
+			if col2.button(f"⬅️6###{segment.order}"):
+				st.session_state.segment_mgr.move_split_point(segment, 'backward', 6)
+			if col3.button(f"⬅️3###{segment.order}"):
+				st.session_state.segment_mgr.move_split_point(segment, 'backward', 3)
+			if col4.button(f"✂️###{segment.order}"):
 				split_segment_and_update(segment)
-			if col3.button(f"➡️ 后10点###{segment.order}"):
-				st.session_state.segment_mgr.move_split_point(segment, 'forward')
+			if col5.button(f"➡️3###{segment.order}"):
+				st.session_state.segment_mgr.move_split_point(segment, 'forward', 3)
+			if col6.button(f"➡️6###{segment.order}"):
+				st.session_state.segment_mgr.move_split_point(segment, 'forward', 6)
+			if col7.button(f"➡️10###{segment.order}"):
+				st.session_state.segment_mgr.move_split_point(segment, 'forward', 10)
 			
 			# 起点终点控制
 			st.sidebar.write("起点终点控制：")
