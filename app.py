@@ -662,12 +662,24 @@ def main():
 			
 			# 起点终点控制
 			st.sidebar.write("起点终点控制：")
-			col4, col5 = st.sidebar.columns(2)
-			if col4.button(f"起点+10###{segment.order}"):
-				st.session_state.segment_mgr.move_split_point(segment, 'start_forward')
+			sc1, sc2, sc3, sc4, sc5, sc6 = st.sidebar.columns([1,1,1,1,1,1])
+			if sc1.button(f"起+10###{segment.order}"):
+				st.session_state.segment_mgr.move_split_point(segment, 'start_forward', 10)
 				st.experimental_rerun()
-			if col5.button(f"终点-10###{segment.order}"):
-				st.session_state.segment_mgr.move_split_point(segment, 'end_backward')
+			if sc2.button(f"起+6###{segment.order}"):
+				st.session_state.segment_mgr.move_split_point(segment, 'start_forward', 6)
+				st.experimental_rerun()
+			if sc3.button(f"起+3###{segment.order}"):
+				st.session_state.segment_mgr.move_split_point(segment, 'start_forward', 3)
+				st.experimental_rerun()
+			if sc4.button(f"终-3###{segment.order}"):
+				st.session_state.segment_mgr.move_split_point(segment, 'end_backward', 3)
+				st.experimental_rerun()
+			if sc5.button(f"终-6###{segment.order}"):
+				st.session_state.segment_mgr.move_split_point(segment, 'end_backward', 6)
+				st.experimental_rerun()
+			if sc6.button(f"终-10###{segment.order}"):
+				st.session_state.segment_mgr.move_split_point(segment, 'end_backward', 10)
 				st.experimental_rerun()
 			
 			# 第二行：轨迹操作
